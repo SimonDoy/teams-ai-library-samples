@@ -13,7 +13,20 @@
         "top_p": 0.0,
         "presence_penalty": 0.6,
         "frequency_penalty": 0.0,
-        "stop_sequences": []
+        "stop_sequences": [],
+        "data_sources":[
+            {
+                "type": "azure_search",
+                "parameters": {
+                    "endpoint": "[input your azure ai search endpoint url here same as AZURE_SEARCH_ENDPOINT.]",
+                    "index_name": "[input your azure ai search endpoint url here same as AZURE_SEARCH_INDEXNAME.]",
+                    "authentication": {
+                        "type": "api_key",
+                        "key": "[input your azure ai search api key here same as AZURE_SEARCH_KEY.]"
+                    }
+                }
+            }
+        ]
     },
     "augmentation": {
         "augmentation_type": "sequence",
