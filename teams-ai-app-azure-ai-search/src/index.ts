@@ -9,18 +9,13 @@ import * as restify from 'restify';
 // Import required bot services.
 // See https://aka.ms/bot-services to learn more about the different parts of a bot.
 import {
-    ActivityTypes,
-    CloudAdapter,
-    ConfigurationBotFrameworkAuthentication,
     ConfigurationServiceClientCredentialFactory,
     MemoryStorage,
     ShowTypingMiddleware,
     TurnContext
 } from 'botbuilder';
 
-
-import { ApplicationBuilder, ActionPlanner, OpenAIModel, PromptManager, TurnState, Application, AI } from '@microsoft/teams-ai';
-import * as responses from './responses';
+import { ActionPlanner, OpenAIModel, PromptManager, TurnState, Application, AI, TeamsAdapter } from '@microsoft/teams-ai';
 import {AzureAISearchDataSource, AzureAISearchDataSourceOptions} from 'teams-ai-azure-ai-search-datasource';
 import { addResponseFormatter } from './responseFormatter';
 
@@ -28,18 +23,15 @@ import { addResponseFormatter } from './responseFormatter';
 const ENV_FILE = path.join(__dirname, '..', '.env');
 config({ path: ENV_FILE });
 
-const botFrameworkAuthentication = new ConfigurationBotFrameworkAuthentication(
-    {},
+// Create adapter.
+// See https://aka.ms/about-bot-adapter to learn more about how bots work.
+const adapter = new TeamsAdapter({},
     new ConfigurationServiceClientCredentialFactory({
         MicrosoftAppId: process.env.BOT_ID,
         MicrosoftAppPassword: process.env.BOT_PASSWORD,
         MicrosoftAppType: 'MultiTenant'
-    })
-);
+    }));
 
-// Create adapter.
-// See https://aka.ms/about-bot-adapter to learn more about how bots work.
-const adapter = new CloudAdapter(botFrameworkAuthentication);
 
 // Catch-all for errors.
 const onTurnErrorHandler = async (context: TurnContext, error: Error) => {
@@ -81,9 +73,7 @@ server.listen(process.env.port || process.env.PORT || 3978, () => {
 
 // Strongly type the applications turn state
 interface ConversationState {
-    secretWord: string;
-    guessCount: number;
-    remainingGuesses: number;
+    data: string;
 }
 type ApplicationTurnState = TurnState<ConversationState>;
 
@@ -146,9 +136,8 @@ addResponseFormatter(app);
 
 // List for /reset command and then delete the conversation state
 app.message('/quit', async (context: TurnContext, state: ApplicationTurnState) => {
-    const { secretWord } = state.conversation;
     state.deleteConversationState();
-    await context.sendActivity(responses.quitGame(secretWord));
+    await context.sendActivity("deleted conversations.");
 });
 
 // Register other AI actions
@@ -174,21 +163,4 @@ server.post('/api/messages', async (req, res) => {
     });
 });
 
-/**
- * Generates a hint for the user based on their input using OpenAI's GPT-3 API.
- * @param {TurnContext} context The current turn context.
- * @param {ApplicationTurnState} state The current turn state.
- * @returns {Promise<string>} A promise that resolves to a string containing the generated hint.
- * @throws {Error} If the request to OpenAI was rate limited.
- */
-async function getHint(context: TurnContext, state: ApplicationTurnState): Promise<string> {
-    state.temp.input = context.activity.text;
-    
-    const result = await planner.completePrompt(context, state, 'hint');
 
-    if (result.status !== 'success') {
-        throw result.error!;
-    }
-
-    return result.message?.content!;
-}
