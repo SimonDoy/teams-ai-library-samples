@@ -15,9 +15,9 @@
         "privacyUrl": "${{BOT_ENDPOINT}}/privacy-policy.html",
         "termsOfUseUrl": "${{BOT_ENDPOINT}}/terms-of-use.html"
     },
-    "description": {
-        "short": "AI powered bot that plays a game of 20 questions.",
-        "full": "AI powered bot that plays a game of 20 questions."
+"description": {
+        "short": "A Copilot that helps get you answers to your legal questions.",
+        "full": "A Copilot that helps get you answers to your legal questions."
     },
     "icons": {
         "outline": "outline.png",
