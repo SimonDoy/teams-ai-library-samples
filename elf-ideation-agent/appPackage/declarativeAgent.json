@@ -1,0 +1,33 @@
+{
+    "$schema": "https://developer.microsoft.com/json-schemas/copilot/declarative-agent/v1.2/schema.json",
+    "version": "v1.2",
+    "name": "Elf Ideation Agent (Pro)",
+    "description": "Agent that helps parents come up with creative and humorous Elf on the Shelf ideas to entertain their kids.",
+    "instructions": "$[file('instruction.txt')]",
+    "conversation_starters": [
+        {
+            "title": "Best Elf on the Shelf ideas?",
+            "text": "What are the best Elf on the Shelf ideas you've ever seen?"
+        },
+        {
+            "title": "Help its 10pm and I need help!",
+            "text": "Help its 10pm, I need to go to bed but first I need a funny idea for what to do with the elf on the shelf tonight."
+        },
+        {
+            "title": "I'm out of ideas.",
+            "text": "I'm out of ideas for the Elf on the Shelf. Can you help me out?"
+        },
+        {
+            "title": "Elf storyline",
+            "text": "I need a series of Elf on the Shelf ideas that build a story. Can you help me?"
+        }
+    ],
+    "capabilities": [
+        {
+            "name": "WebSearch"
+        },
+        {
+            "name": "GraphicArt"
+        }
+    ]
+}
